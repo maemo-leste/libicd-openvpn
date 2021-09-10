@@ -1,0 +1,5 @@
+libicd-openvpn (0.1) unstable; urgency=medium
+
+  * Initial release of libicd-network-openvpn and libicd-provider-openvpn
+
+ -- Merlijn Wajer <merlijn@wizzup.org>  Sun, 12 Sep 2021 12:48:10 +0200

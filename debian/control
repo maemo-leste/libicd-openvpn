@@ -1,0 +1,48 @@
+Source: libicd-openvpn
+Priority: optional
+Maintainer: Merlijn Wajer <merlijn@wizzup.org>
+Build-Depends:
+ debhelper-compat (= 12),
+ libglib2.0-dev,
+ libgconf2-dev,
+ icd2-dev,
+ icd2-osso-ic-dev,
+ maemo-system-services-dev (>= 0.6.1),
+Section: net
+Standards-Version: 4.3.0
+
+Package: libicd-provider-openvpn
+Section: net
+Architecture: any
+Multi-Arch: same
+Depends:
+ ${shlibs:Depends},
+ icd2,
+ openvpn,
+ libicd-network-openvpn,
+ ${shlibs:Depends}
+Description: ICd2 openvpn service provider configuration module
+ ICd2 openvpn service provider configuration module
+
+Package: libicd-network-openvpn
+Section: net
+Architecture: any
+Multi-Arch: same
+Depends:
+ ${shlibs:Depends},
+ icd2,
+ openvpn,
+Description: ICd2 openvpn network configuration module
+ ICd2 openvpn network configuration module
+
+Package: libicd-openvpn-dev
+Section: net
+Architecture: any
+Multi-Arch: same
+Depends:
+ ${shlibs:Depends},
+ ${misc:Depends},
+ icd2-dev,
+Description: Development files for the Internet Connectivity Daemon OpenVPN modules
+ This package contains headers files for the Internet Connectivity Daemon OpenVPN
+ modules.

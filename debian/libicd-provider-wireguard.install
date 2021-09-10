@@ -1,0 +1,2 @@
+etc/gconf/schemas/libicd-provider-openvpn.schemas
+usr/lib/icd2/libicd_provider_openvpn.so
