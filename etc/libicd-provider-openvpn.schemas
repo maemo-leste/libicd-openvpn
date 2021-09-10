@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<gconfschemafile>
+	<schemalist>
+		<schema>
+			<key>/schemas/system/osso/connectivity/srv_provider/OPENVPN/module</key>
+			<applyto>/system/osso/connectivity/srv_provider/OPENVPN/module</applyto>
+			<owner>libicd_provider_openvpn</owner>
+			<type>string</type>
+			<default>libicd_provider_openvpn.so</default>
+			<locale name="C">
+				<short>OpenVPN provider module</short>
+				<long>OpenVPN service provider module for ICd2 testing</long>
+			</locale>
+		</schema>
+        <schema>
+            <key>/schemas/system/osso/connectivity/srv_provider/OPENVPN/network_type</key>
+            <applyto>/system/osso/connectivity/srv_provider/OPENVPN/network_type</applyto>
+            <owner>libicd_provider_openvpn</owner>
+            <type>list</type>
+            <list_type>string</list_type>
+            <default>[DUMMY,GPRS,WLAN_INFRA]</default>
+            <locale name="C">
+                <short>Supported network types</short>
+                <long>List of the network types supported by this provider</long>
+            </locale>
+        </schema>
+        <schema>
+            <key>/schemas/system/osso/connectivity/srv_provider/OPENVPN/default_custom_ui/type_icon_name</key>
+            <applyto>/system/osso/connectivity/srv_provider/OPENVPN/default_custom_ui/type_icon_name</applyto>
+            <owner>libicd_provider_openvpn</owner>
+            <type>string</type>
+            <default>statusarea_openvpn_enabled</default>
+            <locale name="C">
+                <short>Icon name for OpenVPN provider</short>
+                <long>Icon name for the OpenVPN provider ICD2 plugin</long>
+            </locale>
+        </schema>
+        <schema>
+            <key>/schemas/system/osso/connectivity/srv_provider/OPENVPN/default_custom_ui/markup</key>
+            <applyto>/system/osso/connectivity/srv_provider/OPENVPN/default_custom_ui/markup</applyto>
+            <owner>libicd_provider_openvpn</owner>
+            <type>string</type>
+            <default>%s &lt;b&gt;(OpenVPN)&lt;/b&gt;</default>
+            <locale name="C">
+                <short>Markup for the OpenVPN provider</short>
+                <long>Markup string for the OpenVPN provider ICD2 plugin</long>
+            </locale>
+        </schema>
+	</schemalist>
+</gconfschemafile>
