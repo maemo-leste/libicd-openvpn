@@ -56,7 +56,7 @@ static DBusHandlerResult openvpn_icd_dbus_api_request(DBusConnection * connectio
 		return DBUS_HANDLER_RESULT_NOT_YET_HANDLED;
 	}
 
-	ON_DEBUG("ICD2 Tor dbus api request\n");
+	ON_DEBUG("ICD2 OpenVPN dbus api request\n");
 
 	const char *member = dbus_message_get_member(message);
 
@@ -93,7 +93,7 @@ static DBusHandlerResult error_callback(DBusConnection * connection,
 
 int setup_openvpn_dbus(void *user_data)
 {
-	ON_DEBUG("Registering ICD2 Tor dbus service");
+	ON_DEBUG("Registering ICD2 OpenVPN dbus service");
 	if (icd_dbus_register_system_service(ICD_OPENVPN_DBUS_PATH,
 					     ICD_OPENVPN_DBUS_INTERFACE,
 					     DBUS_NAME_FLAG_REPLACE_EXISTING |
@@ -103,7 +103,7 @@ int setup_openvpn_dbus(void *user_data)
 		ON_ERR("Failed to register DBUS interface\n");
 		return 1;
 	}
-	ON_DEBUG("Successfully registered ICD2 Tor dbus service");
+	ON_DEBUG("Successfully registered ICD2 OpenVPN dbus service");
 
 	return 0;
 }

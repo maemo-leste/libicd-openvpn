@@ -112,7 +112,7 @@ static openvpn_network_data *icd_openvpn_find_first_network_data(provider_openvp
 }
 
 static openvpn_network_data *icd_openvpn_find_network_data(const gchar * network_type, guint network_attrs,
-						   const gchar * network_id, provider_openvpn_private * private)
+							   const gchar * network_id, provider_openvpn_private * private)
 {
 	GSList *l;
 
@@ -159,7 +159,9 @@ static void network_free_all(openvpn_network_data * network_data)
 static void network_stop_all(openvpn_network_data * network_data)
 {
 	DBusMessage *msg;
-	msg = dbus_message_new_method_call(ICD_OPENVPN_DBUS_INTERFACE, ICD_OPENVPN_DBUS_PATH, ICD_OPENVPN_DBUS_INTERFACE, "Stop");
+	msg =
+	    dbus_message_new_method_call(ICD_OPENVPN_DBUS_INTERFACE, ICD_OPENVPN_DBUS_PATH, ICD_OPENVPN_DBUS_INTERFACE,
+					 "Stop");
 
 	if (icd_dbus_send_system_mcall(msg, -1, openvpn_get_stop_reply, network_data) == FALSE) {
 		/* Call down callback right away */
@@ -232,9 +234,9 @@ openvpn_provider_statuschanged_sig(DBusConnection * connection, DBusMessage * me
 		/* We could get an unexpected stop, or the expected start (after we
 		 * start it */
 		if (network_data->state > new_state) {
-			/* Tor quit, let's throw down the interface */
+			/* OpenVPN quit, let's throw down the interface */
 
-			priv->close_fn(ICD_SRV_ERROR, "Tor process quit (unexpectedly)",
+			priv->close_fn(ICD_SRV_ERROR, "OpenVPN process quit (unexpectedly)",
 				       network_data->service_type,
 				       network_data->service_attrs,
 				       network_data->service_id,
@@ -276,13 +278,13 @@ openvpn_provider_statuschanged_sig(DBusConnection * connection, DBusMessage * me
  * @param private           reference to the private icd_srv_api member
  */
 static void openvpn_connect(const gchar * service_type,
-			const guint service_attrs,
-			const gchar * service_id,
-			const gchar * network_type,
-			const guint network_attrs,
-			const gchar * network_id,
-			const gchar * interface_name,
-			icd_srv_connect_cb_fn connect_cb, gpointer connect_cb_token, gpointer * private)
+			    const guint service_attrs,
+			    const gchar * service_id,
+			    const gchar * network_type,
+			    const guint network_attrs,
+			    const gchar * network_id,
+			    const gchar * interface_name,
+			    icd_srv_connect_cb_fn connect_cb, gpointer connect_cb_token, gpointer * private)
 {
 	provider_openvpn_private *priv = *private;
 	OP_DEBUG("openvpn_connect: %s\n", network_id);
@@ -305,7 +307,9 @@ static void openvpn_connect(const gchar * service_type,
 	/* Issue dbus call, and upon dbus call result, call the connect_cb */
 
 	DBusMessage *msg;
-	msg = dbus_message_new_method_call(ICD_OPENVPN_DBUS_INTERFACE, ICD_OPENVPN_DBUS_PATH, ICD_OPENVPN_DBUS_INTERFACE, "Start");
+	msg =
+	    dbus_message_new_method_call(ICD_OPENVPN_DBUS_INTERFACE, ICD_OPENVPN_DBUS_PATH, ICD_OPENVPN_DBUS_INTERFACE,
+					 "Start");
 	dbus_message_append_args(msg, DBUS_TYPE_STRING, &service_id, DBUS_TYPE_INVALID);
 
 	if (icd_dbus_send_system_mcall(msg, -1, openvpn_get_start_reply, network_data) == FALSE) {
@@ -340,18 +344,19 @@ static void openvpn_connect(const gchar * service_type,
  * @param private              reference to the private icd_srv_api member
  */
 static void openvpn_disconnect(const gchar * service_type,
-			   const guint service_attrs,
-			   const gchar * service_id,
-			   const gchar * network_type,
-			   const guint network_attrs,
-			   const gchar * network_id,
-			   const gchar * interface_name,
-			   icd_srv_disconnect_cb_fn disconnect_cb, gpointer disconnect_cb_token, gpointer * private)
+			       const guint service_attrs,
+			       const gchar * service_id,
+			       const gchar * network_type,
+			       const guint network_attrs,
+			       const gchar * network_id,
+			       const gchar * interface_name,
+			       icd_srv_disconnect_cb_fn disconnect_cb, gpointer disconnect_cb_token, gpointer * private)
 {
 	OP_DEBUG("openvpn_disconnect: %s\n", network_id);
 	provider_openvpn_private *priv = *private;
 
-	openvpn_network_data *network_data = icd_openvpn_find_network_data(network_type, network_attrs, network_id, priv);
+	openvpn_network_data *network_data =
+	    icd_openvpn_find_network_data(network_type, network_attrs, network_id, priv);
 
 	if (network_data) {
 		network_stop_all(network_data);
@@ -378,15 +383,15 @@ static void openvpn_disconnect(const gchar * service_type,
  * @param identify_cb_token  token to pass to the identification callback
  */
 static void openvpn_identify(enum icd_scan_status status,
-			 const gchar * network_type,
-			 const gchar * network_name,
-			 const guint network_attrs,
-			 const gchar * network_id,
-			 const guint network_priority,
-			 enum icd_nw_levels signal,
-			 const gchar * station_id,
-			 const gint dB,
-			 icd_srv_identify_cb_fn identify_cb, gpointer identify_cb_token, gpointer * private)
+			     const gchar * network_type,
+			     const gchar * network_name,
+			     const guint network_attrs,
+			     const gchar * network_id,
+			     const guint network_priority,
+			     enum icd_nw_levels signal,
+			     const gchar * station_id,
+			     const gint dB,
+			     icd_srv_identify_cb_fn identify_cb, gpointer identify_cb_token, gpointer * private)
 {
 	OP_DEBUG("openvpn_identify: network_type: %s, network_name: %s, network_id: %s\n", network_type, network_name,
 		 network_id);
@@ -405,7 +410,8 @@ static void openvpn_identify(enum icd_scan_status status,
 			    name,
 			    OPENVPN_DEFAULT_SERVICE_ATTRIBUTES,
 			    gconf_service_id,
-			    OPENVPN_DEFAULT_SERVICE_PRIORITY, network_type, network_attrs, network_id, identify_cb_token);
+			    OPENVPN_DEFAULT_SERVICE_PRIORITY, network_type, network_attrs, network_id,
+			    identify_cb_token);
 
 	} else {
 		/* XXX: Do we really need to add provider type and provider id when we
@@ -414,7 +420,8 @@ static void openvpn_identify(enum icd_scan_status status,
 			    name,
 			    OPENVPN_DEFAULT_SERVICE_ATTRIBUTES,
 			    gconf_service_id,
-			    OPENVPN_DEFAULT_SERVICE_PRIORITY, network_type, network_attrs, network_id, identify_cb_token);
+			    OPENVPN_DEFAULT_SERVICE_PRIORITY, network_type, network_attrs, network_id,
+			    identify_cb_token);
 	}
 
 	g_free(gconf_service_id);
@@ -474,7 +481,8 @@ gboolean icd_srv_init(struct icd_srv_api * srv_api,
 	priv->limited_conn_fn = limited_conn;
 
 	if (!icd_dbus_connect_system_bcast_signal
-	    (ICD_OPENVPN_DBUS_INTERFACE, openvpn_provider_statuschanged_sig, priv, ICD_OPENVPN_SIGNAL_STATUSCHANGED_FILTER)) {
+	    (ICD_OPENVPN_DBUS_INTERFACE, openvpn_provider_statuschanged_sig, priv,
+	     ICD_OPENVPN_SIGNAL_STATUSCHANGED_FILTER)) {
 		OP_ERR("Unable to listen to icd2 openvpn signals");
 		g_free(priv);
 		return FALSE;

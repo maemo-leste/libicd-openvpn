@@ -36,19 +36,7 @@
 #define GC_OPENVPN_ACTIVE  GC_NETWORK_TYPE"/active_config"
 #define GC_OPENVPN_SYSTEM  GC_NETWORK_TYPE"/system_wide_enabled"
 
-#if 0
-#define GC_TPENABLED       "transproxy-enabled"
-#define GC_SOCKSPORT       "socks-port"
-#define GC_CONTROLPORT     "control-port"
-#define GC_TRANSPORT       "trans-port"
-#define GC_DNSPORT         "dns-port"
-#define GC_DATADIR         "datadir"
-#define GC_RUNDIR          "rundir"
-#define GC_BRIDGES         "bridges"
-#define GC_BRIDGESENABLED  "bridges-enabled"
-#define GC_HIDDENSERVICES  "hiddenservices"
-#define GC_HSENABLED       "hiddenservices-enabled"
-#endif
+#define GC_CONFIG_OVERRIDE "config_file_override"
 
 #define ICD_OPENVPN_DBUS_INTERFACE "org.maemo.OpenVPN"
 #define ICD_OPENVPN_DBUS_PATH "/org/maemo/OpenVPN"

@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __LIBICD_NETWORK_TOR_H
-#define __LIBICD_NETWORK_TOR_H
+#ifndef __LIBICD_NETWORK_OPENVPN_H
+#define __LIBICD_NETWORK_OPENVPN_H
 #include <string.h>
 #include <stdio.h>
 #include <glib.h>
@@ -43,20 +43,11 @@ struct _network_openvpn_state {
 	gboolean iap_connected;
 	gboolean service_provider_mode;
 
-	gboolean tor_running;
-	gboolean tor_bootstrapped_running;
-	gboolean tor_bootstrapped;
+	gboolean openvpn_running;
 
 	gboolean gconf_transition_ongoing;
 
 	gboolean dbus_failed_to_start;
-#if 0
-	gboolean network_is_tor_service_provider;
-#endif
-#if 0
-	gboolean manual_start_requested;
-	gboolean manual_stop_requested;
-#endif
 };
 typedef struct _network_openvpn_state network_openvpn_state;
 
@@ -90,13 +81,7 @@ struct _openvpn_network_data {
 	gpointer ip_down_cb_token;
 
 	/* Tor pid */
-	pid_t tor_pid;
-
-	/* Tor command auth pw/token */
-	char *tor_stem_auth;
-
-	/* "Wait for Tor" stem script */
-	pid_t wait_for_tor_pid;
+	pid_t openvpn_pid;
 
 	/* For matching / callbacks later on (like close and limited_conn callback) */
 	gchar *network_type;
@@ -109,8 +94,8 @@ gboolean icd_nw_init(struct icd_nw_api *network_api,
 		     icd_nw_watch_pid_fn watch_fn, gpointer watch_fn_token,
 		     icd_nw_close_fn close_fn, icd_nw_status_change_fn status_change_fn, icd_nw_renew_fn renew_fn);
 
-void openvpn_state_change(network_openvpn_private * private, openvpn_network_data * network_data, network_openvpn_state new_state,
-		      int source);
+void openvpn_state_change(network_openvpn_private * private, openvpn_network_data * network_data,
+			  network_openvpn_state new_state, int source);
 
 /* Helpers */
 void network_stop_all(openvpn_network_data * network_data);
@@ -118,8 +103,8 @@ void network_free_all(openvpn_network_data * network_data);
 pid_t spawn_as(const char *username, const char *pathname, char *args[]);
 openvpn_network_data *icd_openvpn_find_first_network_data(network_openvpn_private * private);
 openvpn_network_data *icd_openvpn_find_network_data(const gchar * network_type,
-					    guint network_attrs,
-					    const gchar * network_id, network_openvpn_private * private);
+						    guint network_attrs,
+						    const gchar * network_id, network_openvpn_private * private);
 gboolean string_equal(const char *a, const char *b);
 int startup_openvpn(openvpn_network_data * network_data, char *config);
 
@@ -127,9 +112,7 @@ enum icd_openvpn_event_source_type {
 	EVENT_SOURCE_IP_UP,
 	EVENT_SOURCE_IP_DOWN,
 	EVENT_SOURCE_GCONF_CHANGE,
-    // XXX rename
-	EVENT_SOURCE_TOR_PID_EXIT,
-	EVENT_SOURCE_TOR_BOOTSTRAPPED_PID_EXIT,
+	EVENT_SOURCE_OPENVPN_PID_EXIT,
 	EVENT_SOURCE_DBUS_CALL_START,
 	EVENT_SOURCE_DBUS_CALL_STOP,
 };

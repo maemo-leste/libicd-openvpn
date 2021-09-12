@@ -57,8 +57,8 @@ DBusHandlerResult start_callback(DBusConnection * connection, DBusMessage * mess
 
 	/* We are in provider mode */
 
-	/* Tor already running? */
-	if (priv->state.tor_running == TRUE) {
+	/* OpenVPN already running? */
+	if (priv->state.openvpn_running == TRUE) {
 		return start_reply(OPENVPN_DBUS_METHOD_START_RESULT_ALREADY_RUNNING, reply);
 	}
 
@@ -74,7 +74,7 @@ DBusHandlerResult start_callback(DBusConnection * connection, DBusMessage * mess
 		return start_reply(OPENVPN_DBUS_METHOD_START_RESULT_INVALID_CONFIG, reply);
 	}
 
-	/* Actually start Tor */
+	/* Actually start OpenVPN */
 	network_openvpn_state new_state;
 	memcpy(&new_state, &priv->state, sizeof(network_openvpn_state));
 	new_state.active_config = g_strdup(config);
@@ -104,12 +104,12 @@ DBusHandlerResult stop_callback(DBusConnection * connection, DBusMessage * messa
 		return start_reply(OPENVPN_DBUS_METHOD_STOP_RESULT_REFUSED, reply);
 	}
 
-	/* Tor not running? */
-	if (priv->state.tor_running == FALSE) {
+	/* OpenVPN not running? */
+	if (priv->state.openvpn_running == FALSE) {
 		return start_reply(OPENVPN_DBUS_METHOD_STOP_RESULT_NOT_RUNNING, reply);
 	}
 
-	/* Actually stop Tor */
+	/* Actually stop OpenVPN */
 	network_openvpn_state new_state;
 	memcpy(&new_state, &priv->state, sizeof(network_openvpn_state));
 	openvpn_state_change(priv, NULL, new_state, EVENT_SOURCE_DBUS_CALL_STOP);
@@ -130,14 +130,11 @@ DBusHandlerResult getstatus_callback(DBusConnection * connection, DBusMessage * 
 	}
 
 	/* TODO: DRY this */
-	if (!priv->state.tor_running) {
+	if (!priv->state.openvpn_running) {
 		state = ICD_OPENVPN_SIGNALS_STATUS_STATE_STOPPED;
 	} else {
-		if (priv->state.tor_bootstrapped) {
-			state = ICD_OPENVPN_SIGNALS_STATUS_STATE_CONNECTED;
-		} else {
-			state = ICD_OPENVPN_SIGNALS_STATUS_STATE_STARTED;
-		}
+		state = ICD_OPENVPN_SIGNALS_STATUS_STATE_CONNECTED;
+		/* state = ICD_OPENVPN_SIGNALS_STATUS_STATE_STARTED; */
 	}
 
 	if (!priv->state.service_provider_mode) {
@@ -173,14 +170,11 @@ void emit_status_signal(network_openvpn_state state)
 	}
 
 	/* TODO: DRY this */
-	if (!state.tor_running) {
+	if (!state.openvpn_running) {
 		status = ICD_OPENVPN_SIGNALS_STATUS_STATE_STOPPED;
 	} else {
-		if (state.tor_bootstrapped) {
-			status = ICD_OPENVPN_SIGNALS_STATUS_STATE_CONNECTED;
-		} else {
-			status = ICD_OPENVPN_SIGNALS_STATUS_STATE_STARTED;
-		}
+		status = ICD_OPENVPN_SIGNALS_STATUS_STATE_CONNECTED;
+		/* status = ICD_OPENVPN_SIGNALS_STATUS_STATE_STARTED; */
 	}
 
 	if (!state.service_provider_mode) {

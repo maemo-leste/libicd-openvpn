@@ -51,8 +51,8 @@ openvpn_network_data *icd_openvpn_find_first_network_data(network_openvpn_privat
 }
 
 openvpn_network_data *icd_openvpn_find_network_data(const gchar * network_type,
-					    guint network_attrs,
-					    const gchar * network_id, network_openvpn_private * private)
+						    guint network_attrs,
+						    const gchar * network_id, network_openvpn_private * private)
 {
 	GSList *l;
 
@@ -124,64 +124,37 @@ void network_free_all(openvpn_network_data * network_data)
 
 void network_stop_all(openvpn_network_data * network_data)
 {
-#if 0
-	if (network_data->tor_pid != 0) {
-		kill(network_data->tor_pid, SIGTERM);
+	if (network_data->openvpn_pid != 0) {
+		kill(network_data->openvpn_pid, SIGTERM);
 	}
-	if (network_data->wait_for_tor_pid != 0) {
-		kill(network_data->wait_for_tor_pid, SIGTERM);
-	}
-#endif
 }
 
 int startup_openvpn(openvpn_network_data * network_data, char *config)
 {
-#if 0
-	char config_filename[256];
-	if (snprintf(config_filename, 256, "/etc/tor/torrc-network-%s", config)
-	    >= 256) {
-		ON_WARN("Unable to allocate torrc config filename\n");
+	char *config_filename = NULL;
+
+	config_filename = get_config_file(config);
+
+	if (config_filename == NULL || !g_str_has_prefix(config_filename, "/etc/openvpn/")) {
+		ON_WARN("config_filename is NULL or does not start with /etc/openvpn");
+		g_free(config_filename);
 		return 1;
 	}
 
-	char *config_content = generate_config(config);
-	GError *error = NULL;
-	g_file_set_contents(config_filename, config_content, strlen(config_content), &error);
-	if (error != NULL) {
-		g_clear_error(&error);
-		ON_WARN("Unable to write Tor config file\n");
-		return 1;
-	}
-
-	char *argss[] = { "/usr/bin/tor", "-f", config_filename, NULL };
-	pid_t pid = spawn_as("debian-tor", "/usr/bin/tor", argss);
+	char *argss[] = { "/usr/sbin/openvpn", "--config", config_filename, NULL };
+	/* TODO: do we run this as root? */
+	pid_t pid = spawn_as("root", "/usr/sbin/openvpn", argss);
 	if (pid == 0) {
-		ON_WARN("Failed to start Tor\n");
+		ON_WARN("Failed to start OpenVPN\n");
 		return 1;
 	}
 
-	ON_INFO("Got tor_pid: %d\n", pid);
-	network_data->tor_pid = pid;
+	if (config_filename)
+		g_free(config_filename);
+
+	ON_INFO("Got OpenVPN_pid: %d\n", pid);
+	network_data->openvpn_pid = pid;
 	network_data->private->watch_cb(pid, network_data->private->watch_cb_token);
 
-	gchar *gc_controlport = g_strjoin("/", GC_TOR, config, GC_CONTROLPORT, NULL);
-	GConfClient *gconf = gconf_client_get_default();
-	gint control_port = gconf_client_get_int(gconf, gc_controlport, NULL);
-	g_object_unref(gconf);
-	g_free(gc_controlport);
-	char cport[64];
-	snprintf(cport, 64, "%d", control_port);
-
-	char *argsv[] = { "/usr/bin/libicd-tor-wait-bootstrapped", cport, NULL };
-
-	pid = spawn_as("debian-tor", "/usr/bin/libicd-tor-wait-bootstrapped", argsv);
-	if (pid == 0) {
-		ON_WARN("Failed to start wait for bootstrapping script\n");
-		return 2;
-	}
-	network_data->wait_for_tor_pid = pid;
-	network_data->private->watch_cb(pid, network_data->private->watch_cb_token);
-
-#endif
 	return 0;
 }
