@@ -32,6 +32,7 @@ Depends:
  ${shlibs:Depends},
  icd2,
  openvpn,
+ maemo-system-services-dev,
 Description: ICd2 openvpn network configuration module
  ICd2 openvpn network configuration module
 
